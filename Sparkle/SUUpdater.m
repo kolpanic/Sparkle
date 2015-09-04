@@ -109,7 +109,9 @@ static NSString *const SUUpdaterDefaultsObservationContext = @"SUUpdaterDefaults
 
         // Saving-the-developer-from-a-stupid-mistake-check:
         BOOL hasPublicDSAKey = [host publicDSAKey] != nil;
-        BOOL isMainBundle = [bundle isEqualTo:[NSBundle mainBundle]];
+        // >> Coruscation: the mainBundle is always Coruscation.app
+        BOOL isMainBundle = YES;//[bundle isEqualTo:[NSBundle mainBundle]];
+        // >> Coruscation
         BOOL hostIsCodeSigned = [SUCodeSigningVerifier hostApplicationIsCodeSigned];
         BOOL servingOverHttps = [[[[self feedURL] scheme] lowercaseString] isEqualToString:@"https"];
         if (!isMainBundle && !hasPublicDSAKey) {
@@ -500,13 +502,15 @@ static NSString *const SUUpdaterDefaultsObservationContext = @"SUUpdaterDefaults
     // Determine all the parameters we're attaching to the base feed URL.
     BOOL sendingSystemProfile = [self sendsSystemProfile];
 
-    // Let's only send the system profiling information once per week at most, so we normalize daily-checkers vs. biweekly-checkers and the such.
-    NSDate *lastSubmitDate = [self.host objectForUserDefaultsKey:SULastProfileSubmitDateKey];
-    if (!lastSubmitDate) {
-        lastSubmitDate = [NSDate distantPast];
-    }
-    const NSTimeInterval oneWeek = 60 * 60 * 24 * 7;
-    sendingSystemProfile &= (-[lastSubmitDate timeIntervalSinceNow] >= oneWeek);
+    // >> Coruscation: Don't limit the profile check interval
+//    // Let's only send the system profiling information once per week at most, so we normalize daily-checkers vs. biweekly-checkers and the such.
+//    NSDate *lastSubmitDate = [self.host objectForUserDefaultsKey:SULastProfileSubmitDateKey];
+//    if (!lastSubmitDate) {
+//        lastSubmitDate = [NSDate distantPast];
+//    }
+//    const NSTimeInterval oneWeek = 60 * 60 * 24 * 7;
+//    sendingSystemProfile &= (-[lastSubmitDate timeIntervalSinceNow] >= oneWeek);
+    // >> Coruscation
 
     NSArray *parameters = @[];
     if ([self.delegate respondsToSelector:@selector(feedParametersForUpdater:sendingSystemProfile:)]) {
